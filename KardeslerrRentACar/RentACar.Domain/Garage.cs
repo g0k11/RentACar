@@ -1,17 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RentACar.Domain
 {
-    internal class Garage
+    public class Garage
     {
+        [Key]
         public int Id { get; set; }
-        public string GarageName { get; set; }
-        public string Location { get; set; }
+
+        [Required]
+        public string GarageName { get; set; } = default!;
+
+        [Required]
+        public string Location { get; set; } = default!;
+
+        [Required]
         public DateTime EstablishDate { get; set; }
+
+        [AllowNull]
         public decimal BalanceSheet { get; set; }
 
 
@@ -19,11 +30,11 @@ namespace RentACar.Domain
 
         // Relations
 
-        public ICollection<Vehicle> Vehicles { get; set; }
+        public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 
-        public ICollection<Rentaller> Rentallers { get; set; }
+        public ICollection<Renter> Renters { get; set; } = new List<Renter>();
 
-        public ICollection<Employers> Employers { get; set; }
+        public ICollection<Employers> Employers { get; set; } = new List<Employers>();
 
 
 

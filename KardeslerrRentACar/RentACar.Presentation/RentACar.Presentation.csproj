@@ -6,4 +6,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RentACar.Application\RentACar.Application.csproj" />
+    <ProjectReference Include="..\RentACar.Domain\RentACar.Domain.csproj" />
+    <ProjectReference Include="..\RentACar.DTOs\RentACar.DTOs.csproj" />
+    <ProjectReference Include="..\RentACar.Infrastructure\RentACar.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

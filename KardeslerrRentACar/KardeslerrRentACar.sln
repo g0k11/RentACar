@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.Application", "Ren
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.Infrastructure", "RentACar.Infrastructure\RentACar.Infrastructure.csproj", "{028A7B78-E303-4278-A0C5-9BD2BE06EF60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentACar.DTOs", "RentACar.DTOs\RentACar.DTOs.csproj", "{12001E57-197B-4A3B-921F-580B94B7E12B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.DTOs", "RentACar.DTOs\RentACar.DTOs.csproj", "{12001E57-197B-4A3B-921F-580B94B7E12B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.Data", "RentACar.Data\RentACar.Data.csproj", "{55A0CAC6-641D-4BB2-BC86-66A28D98C357}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.Core", "RentACar.Core\RentACar.Core.csproj", "{DB0E3729-B34B-49E2-8ADA-E25FAE722D3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{12001E57-197B-4A3B-921F-580B94B7E12B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12001E57-197B-4A3B-921F-580B94B7E12B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12001E57-197B-4A3B-921F-580B94B7E12B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55A0CAC6-641D-4BB2-BC86-66A28D98C357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55A0CAC6-641D-4BB2-BC86-66A28D98C357}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55A0CAC6-641D-4BB2-BC86-66A28D98C357}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55A0CAC6-641D-4BB2-BC86-66A28D98C357}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB0E3729-B34B-49E2-8ADA-E25FAE722D3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB0E3729-B34B-49E2-8ADA-E25FAE722D3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB0E3729-B34B-49E2-8ADA-E25FAE722D3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB0E3729-B34B-49E2-8ADA-E25FAE722D3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

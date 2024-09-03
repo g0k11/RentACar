@@ -2,7 +2,7 @@
 
 namespace RentACar.Presentation.Controllers
 {
-    public class RentACar : Controller
+    public class CarController : Controller
     {
         public IActionResult Index()
         {

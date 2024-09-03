@@ -42,9 +42,9 @@ namespace RentACar.Application
             throw new NotImplementedException();
         }
 
-        public Task<List<Vehicle>> GetVehicles()
+        public Task<List<ListVehicleDTO>> GetVehicles()
         {
-            throw new NotImplementedException();
+            
         }
 
         public Task<Vehicle> UpdateVehicle(int vehicleId, Vehicle vehicle)
