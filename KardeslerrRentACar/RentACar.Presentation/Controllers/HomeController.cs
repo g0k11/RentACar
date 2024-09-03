@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RentACar.Presentation.Models;
 using System.Diagnostics;
-using RentACar.Application;
+using RentACar.Application.Interfaces;
 using RentACar.DTOs.Vehicle;
 
 namespace RentACar.Presentation.Controllers
@@ -9,16 +9,16 @@ namespace RentACar.Presentation.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly VehicleService _vehicleService;
-        public HomeController(ILogger<HomeController> logger, VehicleService vehicleService)
+        private readonly IVehicleService _vehicleService;
+        public HomeController(ILogger<HomeController> logger, IVehicleService vehicleService)
         {
             _vehicleService = vehicleService;
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            ListVehicleDTO listVehicleDto = _vehicleService.GetVehicles();
+            ListVehicleDTO listVehicleDto = await _vehicleService.GetVehiclesAsync();
             return View();
         }
 

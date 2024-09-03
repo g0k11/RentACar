@@ -9,15 +9,15 @@ namespace RentACar.Infrastructure.Interfaces
 {
     public interface IVehicleRepository
     {
-        Task<List<Vehicle>> GetVehiclesAsync();
+        Task<List<Vehicle>?> GetVehiclesAsync();
         
-        Task<Vehicle> GetVehicleDetailsAsync(int vehicleId);
+        Task<Vehicle?> GetVehicleDetailsAsync(int vehicleId);
 
         Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
 
         Task<bool> DeleteVehicleAsync(int vehicleId);
 
-        Task<Vehicle> UpdateVehicle(int vehicleId, Vehicle vehicle);
+        Task<Vehicle?> UpdateVehicleAsync(Vehicle vehicle);
         
 
     }

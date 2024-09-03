@@ -1,4 +1,6 @@
-﻿using RentACar.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using RentACar.Data;
+using RentACar.Domain;
 using RentACar.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,29 +12,57 @@ namespace RentACar.Infrastructure
 {
     public class VehicleRepository : IVehicleRepository
     {
-        Task<Vehicle> IVehicleRepository.AddVehicleAsync(Vehicle vehicle)
+        private readonly ApplicationDbContext _context;
+        public VehicleRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        public async Task<Vehicle> AddVehicleAsync(Vehicle vehicle)
+        {
+           await _context.Vehicles.AddAsync(vehicle);
+           await _context.SaveChangesAsync();
+            return vehicle;
         }
 
-        Task<bool> IVehicleRepository.DeleteVehicleAsync(int vehicleId)
+        public async Task<bool> DeleteVehicleAsync(int vehicleId)
         {
-            throw new NotImplementedException();
+            Vehicle? vehicle = await _context.Vehicles.FindAsync(vehicleId);
+
+            if (vehicle == null)
+            {
+                return false;
+            }
+
+           _context.Vehicles.Remove(vehicle);
+           await _context.SaveChangesAsync();
+            return true;
+         
         }
 
-        Task<Vehicle> IVehicleRepository.GetVehicleDetailsAsync(int vehicleId)
+        public async Task<Vehicle?> GetVehicleDetailsAsync(int vehicleId)
         {
-            throw new NotImplementedException();
+            return await _context.Vehicles.FindAsync(vehicleId);
         }
 
-        Task<List<Vehicle>> IVehicleRepository.GetVehiclesAsync()
+        public async Task<List<Vehicle>?> GetVehiclesAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Vehicles.ToListAsync();
         }
 
-        Task<Vehicle> IVehicleRepository.UpdateVehicle(int vehicleId, Vehicle vehicle)
+        public async Task<Vehicle?> UpdateVehicleAsync( Vehicle vehicle)
         {
-            throw new NotImplementedException();
+            Vehicle? entity = await _context.Vehicles.FindAsync(vehicle.Id);
+            if (entity == null) 
+            {
+                return null;
+            }
+            entity.LicensePlate = vehicle.LicensePlate;
+            entity.Color = vehicle.Color;
+            entity.Kms = vehicle.Kms; 
+            entity.RentalPrice = vehicle.RentalPrice;
+            entity.Hp = vehicle.Hp;
+            await _context.SaveChangesAsync();
+            return entity;
         }
     }
 }

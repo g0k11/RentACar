@@ -15,7 +15,7 @@ namespace RentACar.Application
         private readonly IVehicleRepository _vehicleRepository;
         public VehicleService(IVehicleRepository vehicleRepository) { _vehicleRepository = vehicleRepository; }
 
-        public Task<AddVehicleDTO> AddVehicle(AddVehicleDTO vehicleDTO)
+        public async Task<VehicleDTO> AddVehicleAsync(VehicleDTO vehicleDTO)
         {
             Vehicle vehicle = new Vehicle() {
                 LicensePlate = vehicleDTO.LicensePlate,
@@ -32,22 +32,22 @@ namespace RentACar.Application
 
         }
 
-        public Task<bool> DeleteVehicle(int vehicleId)
+        public async Task<bool> DeleteVehicleAsync(int vehicleId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Vehicle> GetVehicleDetails(int vehicleId)
+        public async Task<Vehicle> GetVehicleDetailsAsync(int vehicleId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<ListVehicleDTO>> GetVehicles()
+        public async Task<List<ListVehicleDTO>> GetVehiclesAsync()
         {
-            
+            return new List<ListVehicleDTO>();
         }
 
-        public Task<Vehicle> UpdateVehicle(int vehicleId, Vehicle vehicle)
+        public async Task<UpdateVehicleDTO> UpdateVehicleAsync(int vehicleId, Vehicle vehicle)
         {
             throw new NotImplementedException();
         }

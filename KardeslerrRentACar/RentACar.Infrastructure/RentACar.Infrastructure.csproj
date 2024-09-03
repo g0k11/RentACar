@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RentACar.Data\RentACar.Data.csproj" />
     <ProjectReference Include="..\RentACar.Domain\RentACar.Domain.csproj" />
   </ItemGroup>
 
