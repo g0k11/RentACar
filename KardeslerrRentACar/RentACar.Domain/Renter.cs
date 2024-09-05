@@ -7,7 +7,6 @@ namespace RentACar.Domain
     {
         [Key]
         public int Id { get; set; }
-
         [Required]
         public string GovIdNumber { get; set; } = string.Empty;
 
@@ -16,17 +15,6 @@ namespace RentACar.Domain
 
         [Required]
         public DateTime DateOfBirth { get; set; }
-
-        [Required]
-        [StringLength(111, MinimumLength = 2)]
-        public string Name { get; set; } = string.Empty;
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-
-        [Required]
-        public string Password { get; set; } = string.Empty;
 
         [Required]
         [Phone]
@@ -40,8 +28,16 @@ namespace RentACar.Domain
 
         public int RentCount => Reservations?.Count(x => x.Status == "Valid") ?? 0;
 
+        //Fk
+
+        public int UserId { get; set; }
+
+
         // Relations
         public ICollection<Reservations> Reservations { get; set; } = new List<Reservations>();
+        [Required]
+        public User User { get; set; } = new User();
+
 
     }
 }

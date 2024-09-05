@@ -17,7 +17,7 @@ namespace RentACar.Data
         public DbSet<Renter> Renters { get; set; }
         public DbSet<Reservations> Reservations { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
-
+        public DbSet<User> Users { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

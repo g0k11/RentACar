@@ -12,4 +12,8 @@
     <Folder Include="Reservation\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RentACar.Core\RentACar.Core.csproj" />
+  </ItemGroup>
+
 </Project>
