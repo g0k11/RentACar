@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RentACar.Domain
 {
-    public class Employers
+    public class Employee
     {
         [Key]
         public int Id { get; set; }
