@@ -26,7 +26,6 @@ namespace RentACar.Infrastructure
             {
                 // user
                 await _context.Users.AddAsync(employee.User);
-                await _context.SaveChangesAsync();
 
                 // employee
                 await _context.Employers.AddAsync(employee);
