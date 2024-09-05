@@ -13,10 +13,12 @@ namespace RentACar.Domain
         public int Id { get; set; }
 
         [Required]
+        public string Name { get; set; } = null!;
+
+        [Required]
         public string Status { get; set; } = "Available";
 
         [Required]
-        [RegularExpression("^[0-9]{2}[A-Z]{1,3}[0-9]{2,4}.{8}$", ErrorMessage = "Invalid license plate format.")]
         public string LicensePlate { get; set; }
 
         [Required]

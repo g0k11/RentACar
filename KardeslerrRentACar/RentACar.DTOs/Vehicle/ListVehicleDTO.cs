@@ -8,5 +8,11 @@ namespace RentACar.DTOs.Vehicle
 {
     public class ListVehicleDTO
     {
+        public int Id { get; set; }
+
+        public string Name { get; set; } = null!;
+
+        public double RentalPrice { get; set; }
+
     }
 }

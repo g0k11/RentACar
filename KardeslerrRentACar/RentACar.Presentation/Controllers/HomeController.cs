@@ -3,6 +3,7 @@ using RentACar.Presentation.Models;
 using System.Diagnostics;
 using RentACar.Application.Interfaces;
 using RentACar.DTOs.Vehicle;
+using Microsoft.IdentityModel.Tokens;
 
 namespace RentACar.Presentation.Controllers
 {
@@ -18,7 +19,9 @@ namespace RentACar.Presentation.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ListVehicleDTO listVehicleDto = await _vehicleService.GetVehiclesAsync();
+            //List<ListVehicleDTO> listVehicleDto = await _vehicleService.GetVehiclesAsync();
+            //if (listVehicleDto.IsNullOrEmpty()) { return View(NoContent()); }
+            //return View(listVehicleDto);
             return View();
         }
 

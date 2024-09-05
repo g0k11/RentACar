@@ -1,7 +1,23 @@
+using Microsoft.EntityFrameworkCore;
+using RentACar.Application;
+using RentACar.Application.Interfaces;
+using RentACar.Core.Interfaces;
+using RentACar.Data;
+using RentACar.Domain;
+using RentACar.Infrastructure;
+using RentACar.Infrastructure.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IReservation, Reservations>();
 
 var app = builder.Build();
 

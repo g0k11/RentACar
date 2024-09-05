@@ -17,11 +17,19 @@ namespace RentACar.Infrastructure
         {
             _context = context;
         }
-        public async Task<Vehicle> AddVehicleAsync(Vehicle vehicle)
+        public async Task<Vehicle?> AddVehicleAsync(Vehicle vehicle)
         {
-           await _context.Vehicles.AddAsync(vehicle);
-           await _context.SaveChangesAsync();
-            return vehicle;
+            try
+            {
+                await _context.Vehicles.AddAsync(vehicle);
+                await _context.SaveChangesAsync();
+                return vehicle;
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
         }
 
         public async Task<bool> DeleteVehicleAsync(int vehicleId)
@@ -49,13 +57,14 @@ namespace RentACar.Infrastructure
             return await _context.Vehicles.ToListAsync();
         }
 
-        public async Task<Vehicle?> UpdateVehicleAsync( Vehicle vehicle)
+        public async Task<Vehicle?> UpdateVehicleAsync(Vehicle vehicle)
         {
             Vehicle? entity = await _context.Vehicles.FindAsync(vehicle.Id);
             if (entity == null) 
             {
                 return null;
             }
+            entity.Name = vehicle.Name;
             entity.LicensePlate = vehicle.LicensePlate;
             entity.Color = vehicle.Color;
             entity.Kms = vehicle.Kms; 
