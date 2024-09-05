@@ -74,7 +74,6 @@ namespace RentACar.Infrastructure
             // Güncelleme işlemleri
             renterEntity.User.Name = renter.User.Name;
             renterEntity.User.Email = renter.User.Email;
-            renterEntity.User.PasswordHashed = renter.User.PasswordHashed;
             renterEntity.PhoneNumber = renter.PhoneNumber;
             renterEntity.Address = renter.Address;
 

@@ -27,7 +27,7 @@ namespace RentACar.Application.Services
 
         public async Task<GetRenterDTO?> GetRenterAsync(int id)
         {
-            var renter = await _renterRepository.GetRenterByIdAsync(id);
+            Renter? renter = await _renterRepository.GetRenterByIdAsync(id);
             if (renter == null)
             {
                 return null;
@@ -38,7 +38,7 @@ namespace RentACar.Application.Services
 
         public async Task<List<GetRentersDTO>> GetRentersAsync()
         {
-            var renters = await _renterRepository.GetRentersAsync();
+            List<Renter> renters = await _renterRepository.GetRentersAsync();
             if (renters == null || !renters.Any())
             {
                 return new List<GetRentersDTO>();
@@ -55,7 +55,7 @@ namespace RentACar.Application.Services
 
         public async Task<GetRenterDTO?> UpdateRenterAsync(UpdateRenterDTO updateRenter)
         {
-            var renter = await _renterRepository.GetRenterByIdAsync(updateRenter.Id);
+            Renter? renter = await _renterRepository.GetRenterByIdAsync(updateRenter.Id);
             if (renter == null || _passwordHasher.VerifyHashedPassword(renter.User, renter.User.PasswordHashed, updateRenter.Password) != PasswordVerificationResult.Success)
             {
                 return null;
@@ -64,7 +64,6 @@ namespace RentACar.Application.Services
             // Güncelleme işlemleri
             renter.User.Name = updateRenter.Name;
             renter.User.Email = updateRenter.Email;
-            renter.User.PasswordHashed = _passwordHasher.HashPassword(renter.User, updateRenter.Password); // Yeni şifreyi hash'leyin
             renter.PhoneNumber = updateRenter.PhoneNumber;
             renter.Address = updateRenter.Address;
 

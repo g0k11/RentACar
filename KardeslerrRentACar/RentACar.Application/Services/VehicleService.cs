@@ -33,7 +33,7 @@ namespace RentACar.Application.Services
                 Status = "Available"
             };
 
-            Vehicle response = await _vehicleRepository.AddVehicleAsync(vehicle);
+            Vehicle? response = await _vehicleRepository.AddVehicleAsync(vehicle);
 
             if (response == null)
             {
