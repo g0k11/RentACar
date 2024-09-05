@@ -68,21 +68,32 @@ namespace RentACar.Infrastructure
 
         public async Task<bool> UpdateEmployeeAsync(Employee employee)
         {
-            var employeeEntity = await _context.Employers.Include(e => e.User).FirstOrDefaultAsync(e => e.Id == employee.Id);
-
-            if (employeeEntity == null)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
+                var employeeEntity = await _context.Employers.Include(e => e.User).FirstOrDefaultAsync(e => e.Id == employee.Id);
+
+                if (employeeEntity == null)
+                {
+                    return false;
+                }
+
+                employeeEntity.User.Name = employee.User.Name;
+                employeeEntity.User.Email = employee.User.Email;
+                employeeEntity.PhoneNumber = employee.PhoneNumber;
+                employeeEntity.Address = employee.Address;
+                employeeEntity.Role = employee.Role;
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
                 return false;
             }
-
-            employeeEntity.User.Name = employee.User.Name;
-            employeeEntity.User.Email = employee.User.Email;
-            employeeEntity.PhoneNumber = employee.PhoneNumber;
-            employeeEntity.Address = employee.Address;
-            employeeEntity.Role = employee.Role;            
-
-            await _context.SaveChangesAsync();
-            return true;
+           
         }
     }
 }
