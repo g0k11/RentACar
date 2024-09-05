@@ -13,7 +13,7 @@ namespace RentACar.Infrastructure.Interfaces
         
         Task<Vehicle?> GetVehicleDetailsAsync(int vehicleId);
 
-        Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
+        Task<Vehicle?> AddVehicleAsync(Vehicle vehicle);
 
         Task<bool> DeleteVehicleAsync(int vehicleId);
 

@@ -13,24 +13,23 @@ namespace RentACar.Domain
         [Key]
         public int Id { get; set; }
         [Required]
-        [StringLength(55, MinimumLength = 2)]
-        public string Name { get; set; } = null!;
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = null!;
-        [Required]
-        [RegularExpression("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,24}$")]
-        public string PasswordHashed { get; set; } = null!;
-        [Required]
         [Phone]
         public string PhoneNumber { get; set; } = null!;
         [Required]
         public string Role { get; set; } = null!;
 
-        // Relations
+        //fk
+        [Required]
+        public int UserId { get; set; }
+
         [Required]
         public int GarageId { get; set; }
+        // Relations
+
         [DisallowNull]
         public Garage? Garage { get; set; }
+
+        public User User { get; set; } = new User();
+
     }
 }
