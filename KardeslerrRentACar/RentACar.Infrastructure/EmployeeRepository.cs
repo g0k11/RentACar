@@ -59,17 +59,31 @@ namespace RentACar.Infrastructure
 
         public async Task<List<Employee>> GetAllEmployeesAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Employers.Include(e => e.User).ToListAsync();
         }
 
         public async Task<Employee?> GetEmployeeByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Employers.Include(e => e.User).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<bool> UpdateEmployeeAsync(Employee employee)
         {
-            throw new NotImplementedException();
+            var employeeEntity = await _context.Employers.Include(e => e.User).FirstOrDefaultAsync(e => e.Id == employee.Id);
+
+            if (employeeEntity == null)
+            {
+                return false;
+            }
+
+            employeeEntity.User.Name = employee.User.Name;
+            employeeEntity.User.Email = employee.User.Email;
+            employeeEntity.PhoneNumber = employee.PhoneNumber;
+            employeeEntity.Address = employee.Address;
+            employeeEntity.Role = employee.Role;            
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

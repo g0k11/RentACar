@@ -18,6 +18,10 @@ namespace RentACar.Domain
         [Required]
         public string Role { get; set; } = null!;
 
+        [Required]
+        [StringLength(500, MinimumLength = 10)]
+        public string Address { get; set; } = string.Empty;
+
         //fk
         [Required]
         public int UserId { get; set; }
@@ -27,7 +31,7 @@ namespace RentACar.Domain
         // Relations
 
         [DisallowNull]
-        public Garage? Garage { get; set; }
+        public Garage Garage { get; set; } = new Garage();
 
         public User User { get; set; } = new User();
 
