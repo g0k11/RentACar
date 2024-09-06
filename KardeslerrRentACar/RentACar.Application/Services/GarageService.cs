@@ -31,15 +31,8 @@ namespace RentACar.Application.Services
             {
                 return null;
             }
-            GetGarageDTO responseDTO = new GetGarageDTO()
-            {
-                Id = response.Id,
-                GarageName=response.GarageName,
-                Location = response.Location,
-                EstablishDate=response.EstablishDate,
-                BalanceSheet = response.BalanceSheet
-            };
-            return responseDTO;
+            
+            return Convert(response);
         }
 
         public async Task<bool> DeleteGarageAsync(int id)
@@ -52,19 +45,52 @@ namespace RentACar.Application.Services
             return true;
         }
 
-        public async Task<GetGarageDTO> GetGarageAsync(int id)
+        public async Task<GetGarageDTO?> GetGarageAsync(int id)
         {
-            throw new NotImplementedException();
+            Garage? garage = await _garageRepository.GetGarageAsync(id);
+            if (garage == null)
+            {
+                return null;
+            }
+            return Convert(garage);
         }
 
         public async Task<List<GetGaragesDTO>> GetGaragesAsync()
         {
-            throw new NotImplementedException();
+            List<Garage> garages = await _garageRepository.GetGaragesAsync();
+            return garages.Select(x => new GetGaragesDTO
+            {
+                Id = x.Id,
+                GarageName = x.GarageName,
+                Location = x.Location
+            }).ToList();
         }
 
-        public async Task<GetGarageDTO> UpdateGarageAsync()
+        public async Task<GetGarageDTO?> UpdateGarageAsync(UpdateGarageDTO updateGarage)
         {
-            throw new NotImplementedException();
+            Garage garage = new Garage()
+            {
+                Id = updateGarage.Id,
+                GarageName = updateGarage.Name,
+                Location = updateGarage.Location
+            };
+            Garage? response = await _garageRepository.UpdateGarageAsync(garage);
+            if (response == null)
+            {
+                return null;
+            }
+            return Convert(response);
+        }
+        private GetGarageDTO Convert(Garage garage)
+        {
+            return new GetGarageDTO()
+            {
+                Id = garage.Id,
+                GarageName = garage.GarageName,
+                Location = garage.Location,
+                EstablishDate = garage.EstablishDate,
+                BalanceSheet = garage.BalanceSheet
+            };
         }
     }
 }
