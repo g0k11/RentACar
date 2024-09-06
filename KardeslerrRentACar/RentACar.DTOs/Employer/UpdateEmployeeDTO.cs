@@ -24,5 +24,9 @@ namespace RentACar.DTOs.Employer
         [Required]
         [StringLength(500, MinimumLength = 10)]
         public string Address { get; set; } = string.Empty;
+
+        [Required]
+        [RegularExpression("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,24}$")]
+        public string Password { get; set; } = string.Empty;
     }
 }
