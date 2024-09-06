@@ -32,7 +32,7 @@ namespace RentACar.Application.Services
                 return null;
             }
             
-            return Convert(response);
+            return ConvertToGetGarageDTO(response);
         }
 
         public async Task<bool> DeleteGarageAsync(int id)
@@ -52,7 +52,7 @@ namespace RentACar.Application.Services
             {
                 return null;
             }
-            return Convert(garage);
+            return ConvertToGetGarageDTO(garage);
         }
 
         public async Task<List<GetGaragesDTO>> GetGaragesAsync()
@@ -79,9 +79,9 @@ namespace RentACar.Application.Services
             {
                 return null;
             }
-            return Convert(response);
+            return ConvertToGetGarageDTO(response);
         }
-        private GetGarageDTO Convert(Garage garage)
+        private GetGarageDTO ConvertToGetGarageDTO(Garage garage)
         {
             return new GetGarageDTO()
             {
