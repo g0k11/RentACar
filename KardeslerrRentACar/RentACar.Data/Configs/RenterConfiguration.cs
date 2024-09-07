@@ -25,13 +25,14 @@ namespace RentACar.Data.Configs
     }
     public class ReservationConfiguration : IEntityTypeConfiguration<Reservations>
     {
-        public void Configure(EntityTypeBuilder<Reservation> builder)
-        {
-            // Configuring the one-to-many relationship between Renter and Reservations
-            builder.HasOne(res => res.Renter)        // Reservation has one Renter
-                   .WithMany(r => r.Reservations)    // Renter has many Reservations
-                   .HasForeignKey(res => res.RenterId) // Foreign key in Reservation is RenterId
-                   .OnDelete(DeleteBehavior.Cascade);  // Cascade delete when a Renter is deleted
-        }
+        public void Configure(EntityTypeBuilder<Reservations> builder)
+        {            
+            builder.HasOne(res => res.Renter)        
+                   .WithMany(r => r.Reservations)    
+                   .HasForeignKey(res => res.RenterId) 
+                   .OnDelete(DeleteBehavior.Cascade);  
+
+        }        
     }
+
 }
