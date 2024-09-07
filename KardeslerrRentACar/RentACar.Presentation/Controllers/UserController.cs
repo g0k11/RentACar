@@ -22,6 +22,7 @@ namespace RentACar.Presentation.Controllers
 
             if (result.IsSuccess)
             {
+                
                 // Token ve RefreshToken'ı cookie'ye kaydet
                 Response.Cookies.Append("AuthToken", result.Token, new CookieOptions
                 {
