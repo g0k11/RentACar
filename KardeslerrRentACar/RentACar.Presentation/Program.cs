@@ -18,6 +18,13 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
+.AddCookie(options =>
+{
+    options.Cookie.Name = "AuthToken";
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout"; 
+                                          
+})
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -31,6 +38,7 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super_secret_key_123!"))
     };
 });
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -44,7 +52,7 @@ builder.Services.AddScoped<IVehicleService, VehicleService>();
 
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IGarageRepository, GarageRepository>();
-builder.Services.AddScoped<IRenterRepository,RenterRepository>();
+builder.Services.AddScoped<IRenterRepository, RenterRepository>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
 builder.Services.AddScoped<IReservation, Reservations>();
@@ -83,7 +91,7 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    
+
     SeedData.Initialize(context);
 }
 
