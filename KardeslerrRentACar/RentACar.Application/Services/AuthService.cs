@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using RentACar.Application.Interfaces;
 using RentACar.DTOs.Auth;
+using RentACar.DTOs.User;
 using RentACar.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,24 @@ namespace RentACar.Application.Services
                 };
             }
         }
+        public async Task<UserProfileDTO?> GetUserProfileAsync(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
 
+            var email = jwtToken.Claims.First(claim => claim.Type == JwtRegisteredClaimNames.Sub).Value;
+
+            var user = await _renterRepository.GetRenterByMailAsync(email);
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new UserProfileDTO
+            {
+                //Fill this place
+            };
+        }
         public async Task<bool> RegisterAsync(RegisterDTO addRenter)
         {
             throw new NotImplementedException();

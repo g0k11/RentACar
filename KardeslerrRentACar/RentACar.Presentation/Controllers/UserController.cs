@@ -1,19 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentACar.Application.Interfaces;
 using RentACar.DTOs.Auth;
+using RentACar.DTOs.User;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace RentACar.Presentation.Controllers
 {
     public class UserController : Controller
     {
         private readonly IAuthService _authService;
-        public UserController(IAuthService authService)
+        private readonly HttpClient _httpClient;
+        public UserController(IAuthService authService, HttpClient httpClient)
         {
             _authService = authService;
+            _httpClient = httpClient;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var token = Request.Cookies["AuthToken"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.GetAsync("/api/profile/GetProfile");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var userProfile = JsonSerializer.Deserialize<UserProfileDTO>(jsonResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                return View(userProfile);
+            }
+
+            return RedirectToAction("Login", "Account");
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDto)
@@ -23,7 +45,6 @@ namespace RentACar.Presentation.Controllers
             if (result.IsSuccess)
             {
                 
-                // Token ve RefreshToken'ı cookie'ye kaydet
                 Response.Cookies.Append("AuthToken", result.Token, new CookieOptions
                 {
                     HttpOnly = true,
@@ -41,11 +62,28 @@ namespace RentACar.Presentation.Controllers
                 });
 
                 ViewBag.Mail = result.Mail;
-                return RedirectToAction("Index", "Home");
+                return View("Index");
             }
 
             ViewBag.Error = result.ErrorMessage;
             return View();
+        }
+        [HttpGet("GetProfile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var token = Request.Cookies["AuthToken"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized();
+            }
+
+            var userProfile = await _authService.GetUserProfileAsync(token);
+            if (userProfile == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userProfile);
         }
     }
 }
