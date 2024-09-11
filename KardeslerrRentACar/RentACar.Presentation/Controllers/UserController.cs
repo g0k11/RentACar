@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using RentACar.Application.Interfaces;
 using RentACar.DTOs.Auth;
 using RentACar.DTOs.User;
-using System.Net.Http.Headers;
-using System.Text.Json;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace RentACar.Presentation.Controllers
 {
@@ -11,15 +15,12 @@ namespace RentACar.Presentation.Controllers
     public class UserController : Controller
     {
         private readonly IAuthService _authService;
-        private readonly HttpClient _httpClient;
 
-        public UserController(IAuthService authService, HttpClient httpClient)
+        public UserController(IAuthService authService)
         {
             _authService = authService;
-            _httpClient = httpClient;
         }
 
-        // Giriş yapma işlemi
         [HttpGet]
         public IActionResult Login()
         {
@@ -33,6 +34,7 @@ namespace RentACar.Presentation.Controllers
             {
                 return View(loginDto);
             }
+
             var result = await _authService.LoginAsync(loginDto);
 
             if (result.IsSuccess)
@@ -53,24 +55,41 @@ namespace RentACar.Presentation.Controllers
                     Expires = DateTime.Now.AddDays(30)
                 });
 
-                return RedirectToAction("Index","Home");
+                var claims = new List<Claim>
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, loginDto.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role, "renter") 
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true, 
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30) 
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.Error = result.ErrorMessage;
             return View(result.ErrorMessage);
         }
 
-        // Çıkış yapma işlemi
         [HttpPost("logout")]
         public IActionResult Logout()
         {
             Response.Cookies.Delete("AuthToken");
             Response.Cookies.Delete("RefreshToken");
 
+            // Oturumu sonlandır
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
             return RedirectToAction("Login");
         }
 
-        // Profil bilgilerini getirme
         [HttpGet("Profile")]
         public async Task<IActionResult> Profile()
         {
