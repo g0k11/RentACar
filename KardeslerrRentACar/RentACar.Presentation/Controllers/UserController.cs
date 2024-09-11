@@ -3,48 +3,40 @@ using RentACar.Application.Interfaces;
 using RentACar.DTOs.Auth;
 using RentACar.DTOs.User;
 using System.Net.Http.Headers;
-using System.Net.Http;
 using System.Text.Json;
 
 namespace RentACar.Presentation.Controllers
 {
+    [Route("[Controller]")]
     public class UserController : Controller
     {
         private readonly IAuthService _authService;
         private readonly HttpClient _httpClient;
+
         public UserController(IAuthService authService, HttpClient httpClient)
         {
             _authService = authService;
             _httpClient = httpClient;
         }
-        public async Task<IActionResult> Index()
+
+        // Giriş yapma işlemi
+        [HttpGet]
+        public IActionResult Login()
         {
-            var token = Request.Cookies["AuthToken"];
-            if (string.IsNullOrEmpty(token))
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.GetAsync("/api/profile/GetProfile");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                var userProfile = JsonSerializer.Deserialize<UserProfileDTO>(jsonResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                return View(userProfile);
-            }
-
-            return RedirectToAction("Login", "Account");
+            return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(loginDto);
+            }
             var result = await _authService.LoginAsync(loginDto);
 
             if (result.IsSuccess)
             {
-                
                 Response.Cookies.Append("AuthToken", result.Token, new CookieOptions
                 {
                     HttpOnly = true,
@@ -61,15 +53,26 @@ namespace RentACar.Presentation.Controllers
                     Expires = DateTime.Now.AddDays(30)
                 });
 
-                ViewBag.Mail = result.Mail;
-                return View("Index");
+                return RedirectToAction("Index","Home");
             }
 
             ViewBag.Error = result.ErrorMessage;
-            return View();
+            return View(result.ErrorMessage);
         }
-        [HttpGet("GetProfile")]
-        public async Task<IActionResult> GetProfile()
+
+        // Çıkış yapma işlemi
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("AuthToken");
+            Response.Cookies.Delete("RefreshToken");
+
+            return RedirectToAction("Login");
+        }
+
+        // Profil bilgilerini getirme
+        [HttpGet("Profile")]
+        public async Task<IActionResult> Profile()
         {
             var token = Request.Cookies["AuthToken"];
             if (string.IsNullOrEmpty(token))
@@ -83,7 +86,7 @@ namespace RentACar.Presentation.Controllers
                 return NotFound();
             }
 
-            return Ok(userProfile);
+            return View(userProfile);
         }
     }
 }

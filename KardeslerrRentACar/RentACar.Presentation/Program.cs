@@ -35,7 +35,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = "arkabahcemiz.com.tr",
         ValidAudience = "arkabahcemiz.com.tr",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super_secret_key_123!"))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("asdlqwdASFqefqlmsfqwdqQWDASdqw_124134asdlasdQWFQDwasdxczc"))
     };
 });
 
@@ -66,6 +66,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireRenterRole", policy => policy.RequireRole("renter"));
 });
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -88,11 +90,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-    SeedData.Initialize(context);
-}
+//    SeedData.Initialize(context);
+//}
 
 app.Run();

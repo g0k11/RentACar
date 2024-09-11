@@ -76,7 +76,7 @@ namespace RentACar.Application.Services
         }
         private string GenerateToken(string username, string role)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super_secret_key_123!"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("asdlqwdASFqefqlmsfqwdqQWDASdqw_124134asdlasdQWFQDwasdxczc"));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
