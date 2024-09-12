@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentACar.Application.Interfaces;
 using RentACar.DTOs.Auth;
@@ -22,12 +23,20 @@ namespace RentACar.Presentation.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
+        {
+            return View();
+        }
+        [HttpGet("Register")]
+        [AllowAnonymous]
+        public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginDTO loginDto)
         {
             if (!ModelState.IsValid)
@@ -75,22 +84,23 @@ namespace RentACar.Presentation.Controllers
             }
 
             ViewBag.Error = result.ErrorMessage;
-            return View(result.ErrorMessage);
+            return View(loginDto);
         }
 
-        [HttpPost("logout")]
+        [HttpGet("Logout")]
+        [Authorize]
         public IActionResult Logout()
         {
             Response.Cookies.Delete("AuthToken");
             Response.Cookies.Delete("RefreshToken");
 
-            // Oturumu sonlandır
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return RedirectToAction("Login");
+            return RedirectToAction("Index","Home");
         }
 
         [HttpGet("Profile")]
+        [Authorize]
         public async Task<IActionResult> Profile()
         {
             var token = Request.Cookies["AuthToken"];
@@ -106,6 +116,21 @@ namespace RentACar.Presentation.Controllers
             }
 
             return View(userProfile);
+        }
+        [HttpPost("Register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register(RegisterDTO register)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(register);
+            }
+            bool response = await _authService.RegisterAsync(register);
+            if (!response)
+            {
+                return View();
+            }
+            return View("Login");
         }
     }
 }
