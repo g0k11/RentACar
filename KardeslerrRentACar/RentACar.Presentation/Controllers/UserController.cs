@@ -64,10 +64,19 @@ namespace RentACar.Presentation.Controllers
                     Expires = DateTime.Now.AddDays(30)
                 });
 
+                Response.Cookies.Append("UserEmail", loginDto.Email, new CookieOptions
+                {
+                    HttpOnly = false, // E-posta bilgisini frontend'den okuyacaksan HttpOnly false olmalı
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.Now.AddDays(7)
+                });
+
                 var claims = new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, loginDto.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Email, loginDto.Email),
                     new Claim(ClaimTypes.Role, "renter") 
                 };
 

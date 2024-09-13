@@ -100,6 +100,34 @@ namespace RentACar.Data.Migrations
                     b.ToTable("Garages");
                 });
 
+            modelBuilder.Entity("RentACar.Domain.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("RentACar.Domain.Renter", b =>
                 {
                     b.Property<int>("Id")
@@ -284,6 +312,17 @@ namespace RentACar.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("RentACar.Domain.Payment", b =>
+                {
+                    b.HasOne("RentACar.Domain.User", "User")
+                        .WithMany("Payment")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("RentACar.Domain.Renter", b =>
                 {
                     b.HasOne("RentACar.Domain.User", "User")
@@ -335,6 +374,11 @@ namespace RentACar.Data.Migrations
             modelBuilder.Entity("RentACar.Domain.Renter", b =>
                 {
                     b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("RentACar.Domain.User", b =>
+                {
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("RentACar.Domain.Vehicle", b =>
