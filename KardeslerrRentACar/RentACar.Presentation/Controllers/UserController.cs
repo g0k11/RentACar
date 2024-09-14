@@ -112,7 +112,11 @@ namespace RentACar.Presentation.Controllers
         [Authorize]
         public async Task<IActionResult> Profile()
         {
-            var token = Request.Cookies["AuthToken"];
+            if (!HttpContext.Request.Cookies.TryGetValue("AuthToken", out var token))
+            {
+                return Unauthorized();
+            }
+
             if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized();
@@ -121,7 +125,7 @@ namespace RentACar.Presentation.Controllers
             var userProfile = await _authService.GetUserProfileAsync(token);
             if (userProfile == null)
             {
-                return NotFound();
+                return View();
             }
 
             return View(userProfile);

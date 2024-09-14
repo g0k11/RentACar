@@ -15,43 +15,70 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using BCrypt.Net; // Add this to use BCrypt for password hashing
+using BCrypt.Net;
+using Microsoft.Extensions.Configuration; // Add this to use BCrypt for password hashing
 
 namespace RentACar.Application.Services
 {
     public class AuthService : IAuthService
     {
         private readonly IRenterRepository _renterRepository;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IRenterRepository renterRepository)
+        public AuthService(IConfiguration configuration, IRenterRepository renterRepository)
         {
+            _configuration = configuration;
             _renterRepository = renterRepository;
         }
-        public async Task<UserProfileDTO?> GetUserProfileAsync(string token)
+        public async Task<UserProfileDTO> GetUserProfileAsync(string token)
         {
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-
-            var email = jwtToken.Claims.First(claim => claim.Type == JwtRegisteredClaimNames.Sub).Value;
-
-            var user = await _renterRepository.GetRenterByMailAsync(email);
-            if (user == null)
+            try
             {
-                return null;
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtSettings = _configuration.GetSection("Jwt");
+                var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+
+                // Validate the token
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+                var email = principal.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
+
+                var user = await _renterRepository.GetRenterByMailAsync(email);
+                if (user == null)
+                {
+                    return null;
+                }
+
+                return new UserProfileDTO
+                {
+                    Name = user.User.Name,
+                    Email = user.User.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address,
+                    LicenseType = user.LicenseType,
+                    RentCount = user.RentCount,
+                    DateOfBirth = user.DateOfBirth,
+                    Gender = user.Gender
+                };
             }
-
-            return new UserProfileDTO
+            catch (Exception ex)
             {
-                Name = user.User.Name,
-                Email = user.User.Email,
-                PhoneNumber = user.PhoneNumber,
-                Address = user.Address,
-                LicenseType = user.LicenseType,
-                RentCount = user.RentCount,
-                DateOfBirth = user.DateOfBirth,
-                Gender = user.Gender
-            };
+                Console.WriteLine($"Error occurred: {ex.Message}");
+                throw;
+            }
         }
+
+
 
         public async Task<AuthResultDto> LoginAsync(LoginDTO login)
         {
@@ -119,25 +146,41 @@ namespace RentACar.Application.Services
             return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
 
-        private string GenerateToken(string username, string role)
+        private string GenerateToken(string email, string role)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("asdlqwdASFqefqlmsfqwdqQWDASdqw_124134asdlasdQWFQDwasdxczc"));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtSettings = _configuration.GetSection("Jwt");
+                var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
 
-            var token = new JwtSecurityToken(
-                issuer: "arkabahcemiz.com.tr",
-                audience: "arkabahcemiz.com.tr",
-                claims: new[]
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, username),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Role, role)
-                },
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
+                    Subject = new ClaimsIdentity(new[]
+                    {
+                new Claim(ClaimTypes.Name, email),
+                new Claim(ClaimTypes.Role, role)
+            }),
+                    Expires = DateTime.UtcNow.AddMinutes(int.Parse(jwtSettings["TokenLifetimeMinutes"])),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                    Issuer = jwtSettings["Issuer"],
+                    Audience = jwtSettings["Audience"]
+                };
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(token);
+
+                Console.WriteLine($"Generated Token: {tokenString}");
+
+                return tokenString;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Token generation failed: {ex.Message}");
+                throw;
+            }
         }
+
 
         private string GenerateRefreshToken()
         {
