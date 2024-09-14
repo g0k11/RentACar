@@ -1,5 +1,36 @@
 ﻿<script src="https://js.stripe.com/v3/"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
 
+    #card-element {
+        margin: 20px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    #card-errors {
+        color: red;
+        margin-top: 10px;
+    }
+
+    button {
+        background-color: #5469d4;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        button:disabled {
+            background-color: #cfcfcf;
+        }
+
+</style>
 <form id="payment-form" asp-controller="Payment" asp-action="ProcessPayment" method="post">
 
     <!-- Araç ID ve Fiyat için Gizli Inputlar -->

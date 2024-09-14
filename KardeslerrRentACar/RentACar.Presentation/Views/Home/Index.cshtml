@@ -3,12 +3,94 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+<style>
+    /* General card styling with rounded corners */
+    .card {
+        border: none;
+        border-radius: 15px; /* Rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
 
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+    /* Image styling within the card */
+    .card-img-top {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+
+    /* Filter options styling */
+    .filter-options {
+        margin-left: auto;
+    }
+
+    /* Category list styling */
+    .list-group-item {
+        cursor: pointer;
+        border-radius: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+        .list-group-item:hover {
+            background-color: #e9ecef; /* Light gray background on hover */
+        }
+
+    /* Styling for the container and rows */
+    .container {
+        background-color: #f8f9fa; /* Light background color for the container */
+        border-radius: 15px; /* Rounded corners for the container */
+        padding: 20px;
+    }
+
+    .row.mb-4 {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Heading styling */
+    h2.mb-0 {
+        margin: 0;
+        font-size: 1.75rem; /* Slightly larger font size */
+        color: #343a40; /* Darker text color */
+    }
+
+    /* Enhanced card body styling */
+    .card-body {
+        background-color: #ffffff; /* White background for card body */
+        border-radius: 0 0 15px 15px; /* Rounded bottom corners */
+        padding: 15px;
+        transition: background-color 0.3s ease;
+    }
+
+        .card-body:hover {
+            background-color: #f1f1f1; /* Light gray background on hover */
+        }
+
+    /* Styling for the buttons */
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+
+</style>
 <div class="container mt-4">
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
-                <h2 class="mb-0">Available Cars</h2>
+
                 <div class="filter-options">
                     <select class="form-select" aria-label="Filter by">
                         <option selected>Filter by...</option>
@@ -32,14 +114,17 @@
                 <li class="list-group-item">Electric</li>
             </ul>
         </div>
-
+        
         <div class="col-md-9">
+            <h2 class="mb-0">Available Cars</h2>
+
             <div class="row">
+                
                 @foreach (var vehicle in Model)
                 {
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <img src="car-image-url.jpg" class="card-img-top" alt="Car Image">
+                            <img src="/Images/Vehicle@(vehicle.Id).jpg" class="card-img-top" alt="Car Image">
                             <div class="card-body">
                                 <h5 class="card-title">@vehicle.Name</h5>
                                 <p class="card-text">@vehicle.Brand - @vehicle.VehicleType</p>
