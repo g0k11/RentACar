@@ -36,7 +36,7 @@ namespace RentACar.Application.Services
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var jwtSettings = _configuration.GetSection("Jwt");
-                var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+                var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
                 var validationParameters = new TokenValidationParameters
                 {
@@ -49,7 +49,6 @@ namespace RentACar.Application.Services
                     IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
 
-                // Validate the token
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
                 var email = principal.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
 
@@ -86,6 +85,7 @@ namespace RentACar.Application.Services
 
             if (user != null && VerifyPassword(login.Password, user.User.PasswordHashed))
             {
+                var jwtSettings = _configuration.GetSection("Jwt");
                 var token = GenerateToken(login.Email, "renter");
                 var refreshToken = GenerateRefreshToken();
 
@@ -94,7 +94,7 @@ namespace RentACar.Application.Services
                     Token = token,
                     RefreshToken = refreshToken,
                     Mail = login.Email,
-                    Expiration = DateTime.Now.AddMinutes(30),
+                    Expiration = DateTime.UtcNow.AddMinutes(int.Parse(jwtSettings["TokenLifetimeMinutes"])),
                     IsSuccess = true
                 };
 
@@ -152,7 +152,7 @@ namespace RentACar.Application.Services
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var jwtSettings = _configuration.GetSection("Jwt");
-                var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+                var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -191,6 +191,8 @@ namespace RentACar.Application.Services
                 return Convert.ToBase64String(randomNumber);
             }
         }
+
+      
     }
 }
 

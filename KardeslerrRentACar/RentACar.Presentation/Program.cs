@@ -34,7 +34,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 {
-    options.Cookie.Name = "AuthToken"; 
+    options.Cookie.Name = "Auth"; 
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Strict;
