@@ -65,7 +65,7 @@ namespace RentACar.Infrastructure
 
         public async Task<List<Vehicle>?> GetVehiclesAsync()
         {
-            return await _context.Vehicles.ToListAsync();
+            return await _context.Vehicles.Where(x => x.Status == "Available").ToListAsync();
         }
 
         public async Task<Vehicle?> UpdateVehicleAsync(Vehicle vehicle)

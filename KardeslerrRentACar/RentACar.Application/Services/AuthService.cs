@@ -16,7 +16,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using BCrypt.Net;
-using Microsoft.Extensions.Configuration; // Add this to use BCrypt for password hashing
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization; // Add this to use BCrypt for password hashing
 
 namespace RentACar.Application.Services
 {
@@ -30,6 +31,7 @@ namespace RentACar.Application.Services
             _configuration = configuration;
             _renterRepository = renterRepository;
         }
+        [Authorize]
         public async Task<UserProfileDTO> GetUserProfileAsync(string token)
         {
             try
@@ -50,7 +52,7 @@ namespace RentACar.Application.Services
                 };
 
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
-                var email = principal.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
+                var email = principal.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 
                 var user = await _renterRepository.GetRenterByMailAsync(email);
                 if (user == null)
@@ -158,7 +160,7 @@ namespace RentACar.Application.Services
                 {
                     Subject = new ClaimsIdentity(new[]
                     {
-                new Claim(ClaimTypes.Name, email),
+                new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.Role, role)
             }),
                     Expires = DateTime.UtcNow.AddMinutes(int.Parse(jwtSettings["TokenLifetimeMinutes"])),

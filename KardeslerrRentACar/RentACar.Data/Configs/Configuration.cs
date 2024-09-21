@@ -72,6 +72,10 @@ namespace RentACar.Data.Configs
                 .WithMany(u => u.Payment)
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(p => p.Vehicle)
+                .WithOne()
+                .HasForeignKey<Payment>(p => p.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -13,17 +13,20 @@ public class PaymentService : IPaymentService
     private readonly IPaymentRepository _paymentRepository;
     private readonly IRenterRepository _userRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IVehicleRepository _vehicleRepository;
 
     public PaymentService(
         IOptions<StripeSettings> stripeSettings,
         IPaymentRepository paymentRepository,
         IRenterRepository userRepository,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        IVehicleRepository vehicleRepository)
     {
         _stripeSettings = stripeSettings;
         _paymentRepository = paymentRepository;
         _userRepository = userRepository;
         _httpContextAccessor = httpContextAccessor;
+        _vehicleRepository = vehicleRepository;
     }
 
     public async Task<Charge> ProcessPaymentAsync(PaymentDTO model)
@@ -37,23 +40,27 @@ public class PaymentService : IPaymentService
 
         // Kullanıcıyı repository'den bul
         var renter = await _userRepository.GetRenterByMailAsync(email);
+        Vehicle? vehicle = await _vehicleRepository.GetVehicleDetailsAsync(model.VehicleId);
 
+        if (vehicle == null)
+        {
+            throw new Exception("Araç Bulunamadı.");
+        }
         if (renter == null)
         {
             throw new Exception("Kullanıcı bulunamadı.");
         }
         var options = new ChargeCreateOptions
         {
-            Amount = (long)(model.Amount * 100), 
+            Amount = (long)(model.Amount * 100),
             Currency = "usd",
-            Source = model.TokenId, 
+            Source = model.TokenId,
             Description = "Rezervasyon Ödemesi"
         };
 
         var service = new ChargeService();
         Charge charge = await service.CreateAsync(options);
 
-        
         if (charge.Status == "succeeded")
         {
             var payment = new Payment
@@ -62,7 +69,9 @@ public class PaymentService : IPaymentService
                 TransactionId = charge.Id,
                 PaymentDate = DateTime.Now,
                 UserId = renter.UserId,
-                User = renter.User
+                User = renter.User,
+                VehicleId = model.VehicleId,
+                Vehicle = vehicle
             };
 
             await _paymentRepository.SavePaymentAsync(payment);

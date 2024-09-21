@@ -21,6 +21,6 @@ namespace RentACar.Domain
         [Required]
         public string Role { get; set; } = string.Empty;
 
-        public ICollection<Payment>? Payment { get; set; }
+        public ICollection<Payment> Payment { get; set; } = new List<Payment>();
     }
 }

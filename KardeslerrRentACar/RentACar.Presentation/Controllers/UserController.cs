@@ -83,7 +83,7 @@ namespace RentACar.Presentation.Controllers
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = true, 
+                    //IsPersistent = true, //30 gün sonunda çıkış yapılacak isteğe bağlı kısaltılabilir.
                     ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30) 
                 };
 
@@ -102,6 +102,7 @@ namespace RentACar.Presentation.Controllers
         {
             Response.Cookies.Delete("AuthToken");
             Response.Cookies.Delete("RefreshToken");
+            Response.Cookies.Delete("UserEmail");
 
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -114,11 +115,13 @@ namespace RentACar.Presentation.Controllers
         {
             if (!HttpContext.Request.Cookies.TryGetValue("AuthToken", out var token))
             {
+                Console.WriteLine("token yok");
                 return Unauthorized();
             }
 
             if (string.IsNullOrEmpty(token))
             {
+                Console.WriteLine("Token boş");
                 return Unauthorized();
             }
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RentACar.Application.Interfaces;
 using RentACar.DTOs.Payment;
@@ -13,6 +15,7 @@ public class PaymentController : Controller
         _paymentService = paymentService;
         _stripeSettings = stripeOptions.Value;
     }
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public IActionResult Pay(int vehicleId, double price)
     {
         var model = new PaymentDTO
@@ -25,6 +28,7 @@ public class PaymentController : Controller
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> ProcessPayment(PaymentDTO model)
     {
         var charge = await _paymentService.ProcessPaymentAsync(model);
